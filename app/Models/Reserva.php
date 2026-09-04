@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Reserva extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'data_reserva',
+        'status',
+        'observacao',
+        'cliente_id',
+        'destino_id',
+    ];
+
+    protected $cast = [
+        'cliente_id' => 'integer',
+        'destino_id' => 'integer',
+    ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
+
+    public function destino()
+    {
+        return $this->belongsTo(Destino::class, 'destino_id');
+    }
+}
