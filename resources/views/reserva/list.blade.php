@@ -16,6 +16,7 @@
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Buscar por</label>
                     <select name="tipo" class="form-select">
+                        <option value="cliente">Cliente (Nome)</option>
                         <option value="status">Status</option>
                         <option value="data_reserva">Data</option>
                     </select>

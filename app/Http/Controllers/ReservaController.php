@@ -77,11 +77,17 @@ class ReservaController extends Controller
     public function search(Request $request)
     {
         if (!empty($request->valor)) {
-            $dados = Reserva::where(
-                $request->tipo,
-                'like',
-                "%$request->valor%"
-            )->get();
+            if ($request->tipo == 'cliente') {
+                $dados = Reserva::whereHas('cliente', function ($query) use ($request) {
+                    $query->where('nome', 'like', "%$request->valor%");
+                })->get();
+            } else {
+                $dados = Reserva::where(
+                    $request->tipo,
+                    'like',
+                    "%$request->valor%"
+                )->get();
+            }
         } else {
             $dados = Reserva::all();
         }
