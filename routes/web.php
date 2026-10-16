@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DestinoController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\AtracaoController;
 
 Route::get('/', function () {
     return view('home');
@@ -35,3 +36,13 @@ Route::get('/reserva/edit/{id}', [ReservaController::class, 'edit'])->name('rese
 Route::put('/reserva/update/{id}', [ReservaController::class, 'update'])->name('reserva.update');
 Route::delete('/reserva/{id}', [ReservaController::class, 'destroy'])->name('reserva.destroy');
 Route::post('/reserva/search', [ReservaController::class, 'search'])->name('reserva.search');
+
+// --- Atração ---
+Route::get('/atracao', [AtracaoController::class, 'index']);
+Route::get('/atracao/create', [AtracaoController::class, 'create']);
+Route::post('/atracao/store', [AtracaoController::class, 'store'])->name('atracao.store');
+Route::get('/atracao/edit/{id}', [AtracaoController::class, 'edit'])->name('atracao.edit');
+Route::put('/atracao/update/{id}', [AtracaoController::class, 'update'])->name('atracao.update');
+Route::delete('/atracao/{id}', [AtracaoController::class, 'destroy'])->name('atracao.destroy');
+Route::post('/atracao/search', [AtracaoController::class, 'search'])->name('atracao.search');
+  

@@ -33,6 +33,11 @@
             <i class="bi bi-calendar-check me-1"></i> Reservas
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('atracao*') ? 'active' : '' }}" href="{{ url('atracao') }}">
+            <i class="bi bi-stars me-1"></i> Atrações
+          </a>
+        </li>
       </ul>
     </div>
 
