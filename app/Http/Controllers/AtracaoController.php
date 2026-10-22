@@ -48,7 +48,6 @@ class AtracaoController extends Controller
         $nomeArquivo = null;
         if ($request->hasFile('imagem')) {
             // store() salva o arquivo na pasta 'atracoes' dentro do disco 'public'
-            // e retorna o caminho relativo (ex: "atracoes/abc123.jpg")
             $nomeArquivo = $request->file('imagem')->store('atracoes', 'public');
         }
 

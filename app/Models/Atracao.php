@@ -18,7 +18,6 @@ class Atracao extends Model
         'destino_id',
     ];
 
-    //Relacionamento N:1 — Uma Atração pertence a um Destino.//
     public function destino()
     {
         return $this->belongsTo(Destino::class, 'destino_id');
