@@ -5,6 +5,8 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DestinoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\AtracaoController;
+use App\Http\Controllers\PassaporteController;
+use App\Http\Controllers\RelatorioController;
 
 Route::get('/', function () {
     return view('home');
@@ -45,4 +47,17 @@ Route::get('/atracao/edit/{id}', [AtracaoController::class, 'edit'])->name('atra
 Route::put('/atracao/update/{id}', [AtracaoController::class, 'update'])->name('atracao.update');
 Route::delete('/atracao/{id}', [AtracaoController::class, 'destroy'])->name('atracao.destroy');
 Route::post('/atracao/search', [AtracaoController::class, 'search'])->name('atracao.search');
+
+// --- Passaporte ---
+Route::get('/passaporte', [PassaporteController::class, 'index'])->name('passaportes.index');
+Route::get('/passaporte/create', [PassaporteController::class, 'create'])->name('passaportes.create');
+Route::post('/passaporte/store', [PassaporteController::class, 'store'])->name('passaportes.store');
+Route::get('/passaporte/edit/{id}', [PassaporteController::class, 'edit'])->name('passaportes.edit');
+Route::put('/passaporte/update/{id}', [PassaporteController::class, 'update'])->name('passaportes.update');
+Route::delete('/passaporte/{id}', [PassaporteController::class, 'destroy'])->name('passaportes.destroy');
+
+// --- Relatórios PDF ---
+Route::get('/relatorios/clientes', [RelatorioController::class, 'clientes'])->name('relatorios.clientes');
+Route::get('/relatorios/destinos', [RelatorioController::class, 'destinos'])->name('relatorios.destinos');
+
   

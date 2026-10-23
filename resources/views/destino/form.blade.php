@@ -16,7 +16,8 @@
 
     <div class="card">
         <div class="card-body p-4">
-            <form action="{{ $action }}" method="post">
+            {{-- enctype="multipart/form-data" é OBRIGATÓRIO para envio de arquivos --}}
+            <form action="{{ $action }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @if ($editando) @method('PUT') @endif
                 <input type="hidden" name="id" value="{{ old('id', $data->id ?? '') }}">
@@ -48,6 +49,29 @@
                         <label class="form-label fw-semibold">Descrição</label>
                         <textarea name="descricao" class="form-control" rows="3"
                             placeholder="Descreva o destino...">{{ old('descricao', $data->descricao ?? '') }}</textarea>
+                    </div>
+
+                    {{-- Upload de Imagem --}}
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Foto do Destino</label>
+
+                        {{-- Pré-visualização da imagem atual (apenas no modo edição) --}}
+                        @if ($editando && !empty($data->imagem))
+                            <div class="mb-2">
+                                <img src="{{ asset('storage/' . $data->imagem) }}"
+                                     alt="Imagem atual"
+                                     style="height: 120px; border-radius: .375rem; border: 1px solid #dee2e6;">
+                                <p class="text-muted small mt-1">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Imagem atual. Envie uma nova para substituí-la.
+                                </p>
+                            </div>
+                        @endif
+
+                        <input type="file" name="imagem" accept="image/*"
+                               class="form-control @error('imagem') is-invalid @enderror">
+                        <div class="form-text">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2 MB.</div>
+                        @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>
 

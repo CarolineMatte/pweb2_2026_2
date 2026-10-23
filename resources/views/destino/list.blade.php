@@ -9,6 +9,52 @@
         </a>
     </div>
 
+    {{-- ===== Gráfico de Pizza — Destinos mais procurados ===== --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="card mb-4">
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-pie-chart-fill me-2 text-primary"></i> Destinos mais procurados
+        </div>
+        <div class="card-body d-flex justify-content-center">
+            <div style="max-width: 380px; width: 100%;">
+                <canvas id="graficoDestinos"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctxDestinos = document.getElementById('graficoDestinos').getContext('2d');
+        new Chart(ctxDestinos, {
+            type: 'pie',
+            data: {
+                labels: {!! json_encode($graficoLabels) !!},
+                datasets: [{
+                    data: {!! json_encode($graficoDados) !!},
+                    backgroundColor: [
+                        '#4e79a7','#f28e2b','#e15759','#76b7b2',
+                        '#59a14f','#edc948','#b07aa1','#ff9da7',
+                        '#9c755f','#bab0ac'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.label}: ${ctx.parsed} reserva(s)`
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    {{-- ===== Barra de busca ===== --}}
     <div class="card mb-4">
         <div class="card-body">
             <form action="{{ route('destino.search') }}" method="post" class="row g-2 align-items-end">
@@ -36,6 +82,7 @@
         </div>
     </div>
 
+    {{-- ===== Tabela de resultados ===== --}}
     <div class="card">
         <div class="card-header bg-white">
             <span class="text-muted small">{{ $dados->count() }} registro(s) encontrado(s)</span>
@@ -45,6 +92,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Foto</th>
                         <th>Nome</th>
                         <th>Localização</th>
                         <th>Preço</th>
@@ -56,10 +104,20 @@
                     @foreach ($dados as $item)
                         <tr>
                             <td class="text-muted small">{{ $item->id }}</td>
+                            <td>
+                                {{-- Miniatura da foto do destino --}}
+                                @if ($item->imagem)
+                                    <img src="{{ asset('storage/' . $item->imagem) }}"
+                                         alt="{{ $item->nome }}"
+                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: .375rem;">
+                                @else
+                                    <span class="text-muted small"><i class="bi bi-image"></i> Sem foto</span>
+                                @endif
+                            </td>
                             <td class="fw-semibold">{{ $item->nome }}</td>
                             <td><i class="bi bi-pin-map me-1 text-primary"></i>{{ $item->localizacao }}</td>
                             <td class="text-success fw-semibold">R$ {{ number_format($item->preco, 2, ',', '.') }}</td>
-                            <td class="text-muted small">{{ $item->descricao }}</td>
+                            <td class="text-muted small">{{ str($item->descricao)->limit(60) }}</td>
                             <td class="text-center">
                                 <a class="btn btn-warning btn-sm me-1" href="{{ route('destino.edit', $item->id) }}" title="Editar">
                                     <i class="bi bi-pencil-fill"></i>

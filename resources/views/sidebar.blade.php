@@ -38,6 +38,20 @@
             <i class="bi bi-stars me-1"></i> Atrações
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('passaporte*') ? 'active' : '' }}" href="{{ route('passaportes.index') }}">
+            <i class="bi bi-passport me-1"></i> Passaportes
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Relatórios
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{{ route('relatorios.clientes') }}" target="_blank"><i class="bi bi-people me-1"></i> Relatório Clientes & Viagens</a></li>
+            <li><a class="dropdown-item" href="{{ route('relatorios.destinos') }}" target="_blank"><i class="bi bi-geo-alt me-1"></i> Relatório Destinos & Reservas</a></li>
+          </ul>
+        </li>
       </ul>
     </div>
 

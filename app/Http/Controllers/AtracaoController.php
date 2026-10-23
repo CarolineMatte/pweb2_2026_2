@@ -15,7 +15,11 @@ class AtracaoController extends Controller
         // Sem filtro: retorna todos os registros
         $dados = Atracao::with('destino')->get();
 
-        return view('atracao.list')->with(['dados' => $dados]);
+        // Dados para o Gráfico de Pizza — atrações agrupadas por destino
+        $graficoLabels = Destino::orderBy('nome')->pluck('nome');
+        $graficoDados  = Destino::orderBy('nome')->get()->map(fn($d) => $d->atracoes()->count());
+
+        return view('atracao.list', compact('dados', 'graficoLabels', 'graficoDados'));
     }
 
     // CREATE — exibe o formulário em branco para nova atração

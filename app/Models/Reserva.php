@@ -11,6 +11,7 @@ class Reserva extends Model
 
     protected $fillable = [
         'data_reserva',
+        'data_volta',
         'status',
         'observacao',
         'cliente_id',

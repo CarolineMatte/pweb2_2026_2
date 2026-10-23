@@ -9,6 +9,51 @@
         </a>
     </div>
 
+    {{-- ===== Gráfico de Pizza — Atrações por Destino ===== --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="card mb-4">
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-pie-chart-fill me-2 text-primary"></i> Atrações por Destino
+        </div>
+        <div class="card-body d-flex justify-content-center">
+            <div style="max-width: 380px; width: 100%;">
+                <canvas id="graficoAtracoes"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctxAtracoes = document.getElementById('graficoAtracoes').getContext('2d');
+        new Chart(ctxAtracoes, {
+            type: 'pie',
+            data: {
+                labels: {!! json_encode($graficoLabels) !!},
+                datasets: [{
+                    data: {!! json_encode($graficoDados) !!},
+                    backgroundColor: [
+                        '#4e79a7','#f28e2b','#e15759','#76b7b2',
+                        '#59a14f','#edc948','#b07aa1','#ff9da7',
+                        '#9c755f','#bab0ac'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.label}: ${ctx.parsed} atração(ões)`
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
     {{-- ===== Barra de busca ===== --}}
     <div class="card mb-4">
         <div class="card-body">
@@ -53,7 +98,6 @@
                         <tr>
                             <td class="text-muted small">{{ $item->id }}</td>
                             <td>
-                                {{-- Exibe miniatura se houver imagem cadastrada --}}
                                 @if ($item->imagem)
                                     <img src="{{ asset('storage/' . $item->imagem) }}"
                                          alt="{{ $item->nome }}"
@@ -63,7 +107,6 @@
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $item->nome }}</td>
-                            {{-- Exibe o NOME do destino via Eloquent (nunca o ID) --}}
                             <td>
                                 <i class="bi bi-geo-alt me-1 text-primary"></i>
                                 {{ $item->destino->nome ?? '—' }}

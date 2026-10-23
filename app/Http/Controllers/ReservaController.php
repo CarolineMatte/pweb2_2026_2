@@ -27,16 +27,20 @@ class ReservaController extends Controller
     function validateForm(Request $request, $id = null)
     {
         $request->validate([
-            'data_reserva' => 'required',
+            'data_reserva' => 'required|date',
+            'data_volta'   => 'nullable|date|after_or_equal:data_reserva',
             'status'       => 'required',
             'cliente_id'   => 'required|unique:reservas,cliente_id,' . $id,
             'destino_id'   => 'required',
         ], [
-            'data_reserva.required' => "A :attribute é obrigatória",
-            'status.required'       => "O :attribute é obrigatório",
-            'cliente_id.required'   => "O :attribute é obrigatório",
-            'cliente_id.unique'     => "Este cliente já possui uma reserva ativa.",
-            'destino_id.required'   => "O :attribute é obrigatório",
+            'data_reserva.required'      => "A data de ida é obrigatória",
+            'data_reserva.date'          => "A data de ida deve ser uma data válida",
+            'data_volta.date'            => "A data de volta deve ser uma data válida",
+            'data_volta.after_or_equal'  => "A data de volta deve ser igual ou posterior à data de ida",
+            'status.required'            => "O :attribute é obrigatório",
+            'cliente_id.required'        => "O :attribute é obrigatório",
+            'cliente_id.unique'          => "Este cliente já possui uma reserva ativa.",
+            'destino_id.required'        => "O :attribute é obrigatório",
         ]);
     }
 

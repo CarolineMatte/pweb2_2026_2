@@ -14,6 +14,7 @@ class Destino extends Model
         'localizacao',
         'preco',
         'descricao',
+        'imagem',
     ];
 
     public function reservas()
