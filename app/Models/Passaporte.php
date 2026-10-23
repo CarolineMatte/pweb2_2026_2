@@ -16,7 +16,6 @@ class Passaporte extends Model
         'cliente_id',
     ];
 
-    // Relacionamento 1:1 — Um Passaporte pertence a um Cliente.
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');

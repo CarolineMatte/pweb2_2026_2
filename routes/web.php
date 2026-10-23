@@ -59,5 +59,3 @@ Route::delete('/passaporte/{id}', [PassaporteController::class, 'destroy'])->nam
 // --- Relatórios PDF ---
 Route::get('/relatorios/clientes', [RelatorioController::class, 'clientes'])->name('relatorios.clientes');
 Route::get('/relatorios/destinos', [RelatorioController::class, 'destinos'])->name('relatorios.destinos');
-
-  

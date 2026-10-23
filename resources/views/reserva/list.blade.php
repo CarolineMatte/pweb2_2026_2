@@ -48,7 +48,8 @@
                         <th>#</th>
                         <th>Cliente</th>
                         <th>Destino</th>
-                        <th>Data da Reserva</th>
+                        <th>Atração</th>
+                        <th>Ida / Volta</th>
                         <th>Status</th>
                         <th>Observação</th>
                         <th class="text-center">Ações</th>
@@ -58,32 +59,37 @@
                     @foreach ($dados as $item)
                         <tr>
                             <td class="text-muted small">{{ $item->id }}</td>
-                            <td class="fw-semibold">
-                                <i class="bi bi-person me-1 text-primary"></i>{{ $item->cliente->nome }}
-                            </td>
+                            <td>{{ $item->cliente->nome ?? '—' }}</td>
+                            <td>{{ $item->destino->nome ?? '—' }}</td>
                             <td>
-                                <i class="bi bi-geo-alt me-1 text-success"></i>{{ $item->destino->nome }}
-                            </td>
-                            <td>{{ date('d/m/Y', strtotime($item->data_reserva)) }}</td>
-                            <td>
-                                @if ($item->status == 'Confirmada')
-                                    <span class="badge bg-success">{{ $item->status }}</span>
-                                @elseif ($item->status == 'Pendente')
-                                    <span class="badge bg-warning text-dark">{{ $item->status }}</span>
+                                @if ($item->atracao)
+                                    <span class="badge bg-secondary"><i class="bi bi-stars me-1"></i>{{ $item->atracao->nome }}</span>
                                 @else
-                                    <span class="badge bg-danger">{{ $item->status }}</span>
+                                    <span class="text-muted small">—</span>
                                 @endif
                             </td>
-                            <td class="text-muted small">{{ $item->observacao }}</td>
+                            <td>
+                                <i class="bi bi-calendar-event me-1 text-primary"></i>
+                                {{ date('d/m/Y', strtotime($item->data_reserva)) }}
+                                @if (!empty($item->data_volta))
+                                    <br><small class="text-muted"><i class="bi bi-arrow-return-left me-1"></i>volta: {{ date('d/m/Y', strtotime($item->data_volta)) }}</small>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="badge {{ $item->status == 'Confirmada' ? 'bg-success' : 'bg-warning text-dark' }}">
+                                    {{ $item->status }}
+                                </span>
+                            </td>
+                            <td>{{ $item->observacao ?? '—' }}</td>
                             <td class="text-center">
-                                <a class="btn btn-warning btn-sm me-1" href="{{ route('reserva.edit', $item->id) }}" title="Editar">
+                                <a class="btn btn-warning btn-sm me-1" href="{{ url('reserva/edit/' . $item->id) }}" title="Editar">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
                                 <form action="{{ route('reserva.destroy', $item->id) }}" method="post" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Deseja excluir esta reserva?')" title="Excluir">
+                                            onclick="return confirm('Deseja excluir esta reserva?')" title="Excluir">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </form>

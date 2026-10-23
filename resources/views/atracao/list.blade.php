@@ -9,14 +9,26 @@
         </a>
     </div>
 
-    {{-- ===== Gráfico de Pizza — Atrações por Destino ===== --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div class="card mb-4">
         <div class="card-header bg-white fw-semibold">
-            <i class="bi bi-pie-chart-fill me-2 text-primary"></i> Atrações por Destino
+            <i class="bi bi-pie-chart-fill me-2 text-primary"></i> Procura de Atrações (Reservas Confirmadas)
         </div>
-        <div class="card-body d-flex justify-content-center">
+        <div class="card-body d-flex flex-column align-items-center">
+            @php
+                $totalReservasConfirmadasAtracoes = collect($graficoDados)->sum();
+            @endphp
+
+            @if ($totalReservasConfirmadasAtracoes == 0)
+                <div class="alert alert-info d-flex align-items-center py-2 px-3 my-2" role="alert">
+                    <i class="bi bi-info-circle me-2 fs-5"></i>
+                    <div>
+                        Ainda não há reservas confirmadas para nenhuma atração.
+                    </div>
+                </div>
+            @endif
+
             <div style="max-width: 380px; width: 100%;">
                 <canvas id="graficoAtracoes"></canvas>
             </div>
@@ -42,11 +54,12 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: { position: 'bottom' },
                     tooltip: {
                         callbacks: {
-                            label: ctx => ` ${ctx.label}: ${ctx.parsed} atração(ões)`
+                            label: ctx => ` ${ctx.label}: ${ctx.parsed} reserva(s) confirmada(s)`
                         }
                     }
                 }
@@ -54,17 +67,21 @@
         });
     </script>
 
-    {{-- ===== Barra de busca ===== --}}
     <div class="card mb-4">
         <div class="card-body">
             <form action="{{ route('atracao.search') }}" method="post" class="row g-2 align-items-end">
                 @csrf
-                <div class="col-md-8">
-                    <label class="form-label fw-semibold">Buscar por Nome</label>
-                    <input type="text" name="valor" placeholder="Digite o nome da atração..."
-                           class="form-control" value="{{ request('valor') }}">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Buscar por</label>
+                    <select name="tipo" class="form-select">
+                        <option value="nome">Nome da Atração</option>
+                    </select>
                 </div>
-                <div class="col-md-4 d-flex gap-2">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Valor</label>
+                    <input type="text" name="valor" placeholder="Ex: Trilha, Mergulho..." class="form-control">
+                </div>
+                <div class="col-md-3 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-search me-1"></i> Buscar
                     </button>
@@ -76,7 +93,6 @@
         </div>
     </div>
 
-    {{-- ===== Tabela de resultados ===== --}}
     <div class="card">
         <div class="card-header bg-white">
             <span class="text-muted small">{{ $dados->count() }} registro(s) encontrado(s)</span>
@@ -94,31 +110,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($dados as $item)
+                    @foreach ($dados as $item)
                         <tr>
                             <td class="text-muted small">{{ $item->id }}</td>
                             <td>
-                                @if ($item->imagem)
+                                @if (!empty($item->imagem))
                                     <img src="{{ asset('storage/' . $item->imagem) }}"
                                          alt="{{ $item->nome }}"
-                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: .375rem;">
+                                         class="rounded shadow-sm"
+                                         style="width: 52px; height: 52px; object-fit: cover;">
                                 @else
-                                    <span class="text-muted small"><i class="bi bi-image"></i> Sem foto</span>
+                                    <span class="d-inline-flex align-items-center justify-content-center bg-light text-muted rounded border"
+                                          style="width: 52px; height: 52px;" title="Sem imagem">
+                                        <i class="bi bi-image text-secondary"></i>
+                                    </span>
                                 @endif
                             </td>
                             <td class="fw-semibold">{{ $item->nome }}</td>
                             <td>
-                                <i class="bi bi-geo-alt me-1 text-primary"></i>
+                                <i class="bi bi-geo-alt me-1 text-danger"></i>
                                 {{ $item->destino->nome ?? '—' }}
                             </td>
-                            <td class="text-muted small">{{ str($item->descricao)->limit(60) }}</td>
+                            <td>{{ Str::limit($item->descricao, 60) }}</td>
                             <td class="text-center">
-                                <a class="btn btn-warning btn-sm me-1"
-                                   href="{{ route('atracao.edit', $item->id) }}" title="Editar">
+                                <a class="btn btn-warning btn-sm me-1" href="{{ url('atracao/edit/' . $item->id) }}" title="Editar">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
-                                <form action="{{ route('atracao.destroy', $item->id) }}"
-                                      method="post" class="d-inline">
+                                <form action="{{ route('atracao.destroy', $item->id) }}" method="post" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm"
@@ -128,14 +146,7 @@
                                 </form>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                <i class="bi bi-inbox fs-4 d-block mb-1"></i>
-                                Nenhuma atração encontrada.
-                            </td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>

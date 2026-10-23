@@ -9,7 +9,6 @@
         </a>
     </div>
 
-    {{-- ===== Mensagens de feedback ===== --}}
     @if (session('sucesso'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle me-1"></i> {{ session('sucesso') }}
@@ -17,7 +16,6 @@
         </div>
     @endif
 
-    {{-- ===== Tabela de resultados ===== --}}
     <div class="card">
         <div class="card-header bg-white">
             <span class="text-muted small">{{ $passaportes->count() }} registro(s) encontrado(s)</span>

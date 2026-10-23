@@ -21,8 +21,6 @@
                 @if ($editando) @method('PUT') @endif
 
                 <div class="row g-3">
-
-                    {{-- Número do Documento --}}
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">
                             Nº do Documento <span class="text-danger">*</span>
@@ -36,7 +34,6 @@
                         @enderror
                     </div>
 
-                    {{-- País Emissor --}}
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">
                             País Emissor <span class="text-danger">*</span>
@@ -50,7 +47,6 @@
                         @enderror
                     </div>
 
-                    {{-- Data de Validade --}}
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">
                             Data de Validade <span class="text-danger">*</span>
@@ -63,7 +59,6 @@
                         @enderror
                     </div>
 
-                    {{-- Select de Cliente (1:1 — só clientes sem passaporte) --}}
                     <div class="col-md-8">
                         <label class="form-label fw-semibold">
                             Cliente <span class="text-danger">*</span>
@@ -86,8 +81,7 @@
                             Apenas clientes sem passaporte cadastrado são exibidos.
                         </div>
                     </div>
-
-                </div>{{-- /row --}}
+                </div>
 
                 <hr class="my-4">
                 <div class="d-flex gap-2">

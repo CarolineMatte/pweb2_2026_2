@@ -22,7 +22,6 @@ class Destino extends Model
         return $this->hasMany(Reserva::class, 'destino_id');
     }
 
-   // Relacionamento 1:N — Um Destino tem muitas Atrações.
     public function atracoes()
     {
         return $this->hasMany(Atracao::class, 'destino_id');

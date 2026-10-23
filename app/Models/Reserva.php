@@ -16,11 +16,13 @@ class Reserva extends Model
         'observacao',
         'cliente_id',
         'destino_id',
+        'atracao_id',
     ];
 
     protected $cast = [
         'cliente_id' => 'integer',
         'destino_id' => 'integer',
+        'atracao_id' => 'integer',
     ];
 
     public function cliente()
@@ -31,5 +33,10 @@ class Reserva extends Model
     public function destino()
     {
         return $this->belongsTo(Destino::class, 'destino_id');
+    }
+
+    public function atracao()
+    {
+        return $this->belongsTo(Atracao::class, 'atracao_id');
     }
 }

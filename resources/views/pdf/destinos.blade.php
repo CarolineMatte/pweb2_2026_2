@@ -2,92 +2,42 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Relatório de Destinos e Reservas</title>
+    <title>Relatório de Destinos</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #333;
-            margin: 20px;
-        }
-        h2 {
-            text-align: center;
-            color: #031273;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #031273;
-        }
-        tr:nth-child(even) {
-            background-color: #fafafa;
-        }
-        .header-info {
-            margin-bottom: 15px;
-            font-size: 11px;
-            color: #666;
-            text-align: right;
-        }
-        ul {
-            margin: 0;
-            padding-left: 15px;
-        }
+        body { font-family: sans-serif; font-size: 11px; color: #333; margin: 15px; }
+        h2 { text-align: center; color: #0d6efd; margin-bottom: 5px; }
+        p.subtitulo { text-align: center; font-size: 10px; color: #666; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <div class="header-info">
-        Gerado em: {{ date('d/m/Y H:i') }} | BioViagens
-    </div>
-
-    <h2>Relatório de Destinos Turísticos e Passageiros</h2>
+    <h2>BioViagens - Relatório de Destinos e Atrações</h2>
+    <p class="subtitulo">Gerado em: {{ date('d/m/Y H:i') }}</p>
 
     <table>
         <thead>
             <tr>
                 <th>Destino</th>
-                <th>Localização</th>
-                <th>Preço</th>
+                <th>País</th>
+                <th>Preço Diária</th>
+                <th>Total Reservas</th>
                 <th>Atrações Cadastradas</th>
-                <th>Clientes com Reserva</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($destinos as $destino)
+            @forelse($destinos as $destino)
                 <tr>
-                    <td><strong>{{ $destino->nome }}</strong></td>
-                    <td>{{ $destino->localizacao }}</td>
+                    <td>{{ $destino->nome }}</td>
+                    <td>{{ $destino->pais ?? $destino->localizacao }}</td>
                     <td>R$ {{ number_format($destino->preco, 2, ',', '.') }}</td>
+                    <td>{{ $destino->reservas ? $destino->reservas->count() : 0 }}</td>
                     <td>
-                        @if ($destino->atracoes->count() > 0)
-                            <ul>
-                                @foreach ($destino->atracoes as $atracao)
-                                    <li>{{ $atracao->nome }}</li>
-                                @endforeach
-                            </ul>
+                        @if($destino->atracoes && $destino->atracoes->count() > 0)
+                            {{ $destino->atracoes->pluck('nome')->implode(', ') }}
                         @else
-                            <span style="color: #999;">Sem atrações</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if ($destino->reservas->count() > 0)
-                            <ul>
-                                @foreach ($destino->reservas as $reserva)
-                                    <li>{{ $reserva->cliente->nome ?? 'Cliente não identificado' }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <span style="color: #999;">Nenhuma reserva</span>
+                            <em>Nenhuma atração</em>
                         @endif
                     </td>
                 </tr>
@@ -98,6 +48,5 @@
             @endforelse
         </tbody>
     </table>
-
 </body>
 </html>

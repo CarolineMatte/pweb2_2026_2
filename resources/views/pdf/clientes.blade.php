@@ -4,106 +4,52 @@
     <meta charset="UTF-8">
     <title>Relatório de Clientes e Reservas</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #333;
-            margin: 20px;
-        }
-        h2 {
-            text-align: center;
-            color: #031273;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #031273;
-        }
-        tr:nth-child(even) {
-            background-color: #fafafa;
-        }
-        .header-info {
-            margin-bottom: 15px;
-            font-size: 11px;
-            color: #666;
-            text-align: right;
-        }
-        .badge {
-            display: inline-block;
-            padding: 2px 5px;
-            font-size: 10px;
-            background-color: #eee;
-            border-radius: 3px;
-        }
+        body { font-family: sans-serif; font-size: 11px; color: #333; margin: 15px; }
+        h2 { text-align: center; color: #198754; margin-bottom: 5px; }
+        p.subtitulo { text-align: center; font-size: 10px; color: #666; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <div class="header-info">
-        Gerado em: {{ date('d/m/Y H:i') }} | BioViagens
-    </div>
-
-    <h2>Relatório Geral de Clientes e Viagens</h2>
+    <h2>BioViagens - Relatório de Clientes e Reservas</h2>
+    <p class="subtitulo">Gerado em: {{ date('d/m/Y H:i') }}</p>
 
     <table>
         <thead>
             <tr>
                 <th>Cliente</th>
-                <th>Contato</th>
+                <th>CPF</th>
                 <th>Passaporte</th>
                 <th>Destino</th>
-                <th>Período</th>
-                <th>Atrações do Destino</th>
+                <th>Ida / Volta</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($clientes as $cliente)
+            @forelse($clientes as $cliente)
                 <tr>
-                    <td><strong>{{ $cliente->nome }}</strong><br><small>CPF: {{ $cliente->cpf }}</small></td>
-                    <td>{{ $cliente->telefone ?? '—' }}<br><small>{{ $cliente->email }}</small></td>
+                    <td>{{ $cliente->nome }}</td>
+                    <td>{{ $cliente->cpf }}</td>
+                    <td>{{ $cliente->passaporte ? $cliente->passaporte->numero_documento . ' (' . $cliente->passaporte->pais_emissor . ')' : 'Não possui' }}</td>
+                    <td>{{ $cliente->reserva && $cliente->reserva->destino ? $cliente->reserva->destino->nome : 'Sem reserva' }}</td>
                     <td>
-                        @if ($cliente->passaporte)
-                            {{ $cliente->passaporte->numero_documento }} ({{ $cliente->passaporte->pais_emissor }})
+                        @if($cliente->reserva)
+                            {{ date('d/m/Y', strtotime($cliente->reserva->data_reserva)) }}
+                            @if($cliente->reserva->data_volta)
+                                até {{ date('d/m/Y', strtotime($cliente->reserva->data_volta)) }}
+                            @endif
                         @else
-                            <span style="color: #999;">Sem passaporte</span>
-                        @endif
-                    </td>
-                    <td>
-                        {{ $cliente->reserva->destino->nome ?? 'Sem reserva' }}
-                    </td>
-                    <td>
-                        @if ($cliente->reserva)
-                            Ida: {{ \Carbon\Carbon::parse($cliente->reserva->data_reserva)->format('d/m/Y') }}<br>
-                            Volta: {{ $cliente->reserva->data_volta ? \Carbon\Carbon::parse($cliente->reserva->data_volta)->format('d/m/Y') : '—' }}
-                        @else
-                            —
-                        @endif
-                    </td>
-                    <td>
-                        @if (isset($cliente->reserva->destino) && $cliente->reserva->destino->atracoes->count() > 0)
-                            {{ $cliente->reserva->destino->atracoes->pluck('nome')->implode(', ') }}
-                        @else
-                            <span style="color: #999;">Nenhuma</span>
+                            -
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center;">Nenhum cliente cadastrado.</td>
+                    <td colspan="5" style="text-align: center;">Nenhum cliente cadastrado.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
-
 </body>
 </html>

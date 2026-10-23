@@ -8,22 +8,18 @@ use Illuminate\Http\Request;
 
 class PassaporteController extends Controller
 {
-    // Lista todos os passaportes
     public function index()
     {
         $passaportes = Passaporte::with('cliente')->get();
         return view('passaportes.list', compact('passaportes'));
     }
 
-    // Exibe o formulário de criação
     public function create()
     {
-        // Só clientes que ainda NÃO têm passaporte podem ser selecionados
         $clientes = Cliente::whereDoesntHave('passaporte')->get();
         return view('passaportes.form', compact('clientes'));
     }
 
-    // Salva o novo passaporte
     public function store(Request $request)
     {
         $request->validate([
@@ -38,18 +34,15 @@ class PassaporteController extends Controller
         return redirect()->route('passaportes.index')->with('sucesso', 'Passaporte cadastrado com sucesso!');
     }
 
-    // Exibe o formulário de edição
     public function edit($id)
     {
         $passaporte = Passaporte::findOrFail($id);
-        // Na edição, inclui o cliente atual + os que não têm passaporte
         $clientes = Cliente::whereDoesntHave('passaporte')
             ->orWhere('id', $passaporte->cliente_id)
             ->get();
         return view('passaportes.form', compact('passaporte', 'clientes'));
     }
 
-    // Atualiza o passaporte
     public function update(Request $request, $id)
     {
         $passaporte = Passaporte::findOrFail($id);
@@ -66,7 +59,6 @@ class PassaporteController extends Controller
         return redirect()->route('passaportes.index')->with('sucesso', 'Passaporte atualizado com sucesso!');
     }
 
-    // Exclui o passaporte
     public function destroy($id)
     {
         $passaporte = Passaporte::findOrFail($id);

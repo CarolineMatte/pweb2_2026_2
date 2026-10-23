@@ -16,7 +16,6 @@
 
     <div class="card">
         <div class="card-body p-4">
-            {{-- enctype="multipart/form-data" é OBRIGATÓRIO para envio de arquivos --}}
             <form action="{{ $action }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @if ($editando) @method('PUT') @endif
@@ -29,12 +28,14 @@
                             value="{{ old('nome', $data->nome ?? '') }}" placeholder="Ex: Amazônia Brasileira">
                         @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
+
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Localização <span class="text-danger">*</span></label>
                         <input type="text" name="localizacao" class="form-control @error('localizacao') is-invalid @enderror"
                             value="{{ old('localizacao', $data->localizacao ?? '') }}" placeholder="Ex: Brasil, América do Sul">
                         @error('localizacao') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
+
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Preço (R$) <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -45,33 +46,30 @@
                             @error('preco') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
+
                     <div class="col-12">
                         <label class="form-label fw-semibold">Descrição</label>
                         <textarea name="descricao" class="form-control" rows="3"
                             placeholder="Descreva o destino...">{{ old('descricao', $data->descricao ?? '') }}</textarea>
                     </div>
 
-                    {{-- Upload de Imagem --}}
                     <div class="col-12">
                         <label class="form-label fw-semibold">Foto do Destino</label>
 
-                        {{-- Pré-visualização da imagem atual (apenas no modo edição) --}}
                         @if ($editando && !empty($data->imagem))
                             <div class="mb-2">
                                 <img src="{{ asset('storage/' . $data->imagem) }}"
-                                     alt="Imagem atual"
-                                     style="height: 120px; border-radius: .375rem; border: 1px solid #dee2e6;">
-                                <p class="text-muted small mt-1">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Imagem atual. Envie uma nova para substituí-la.
-                                </p>
+                                     alt="Foto atual de {{ $data->nome }}"
+                                     class="img-thumbnail rounded"
+                                     style="max-height: 120px; object-fit: cover;">
+                                <div class="form-text">Imagem atual cadastrada. Envie outra abaixo caso queira substituí-la.</div>
                             </div>
                         @endif
 
                         <input type="file" name="imagem" accept="image/*"
-                               class="form-control @error('imagem') is-invalid @enderror">
-                        <div class="form-text">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2 MB.</div>
+                            class="form-control @error('imagem') is-invalid @enderror">
                         @error('imagem') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <div class="form-text">Formatos aceitos: JPG, PNG, GIF, WEBP. Tamanho máx: 2 MB.</div>
                     </div>
                 </div>
 

@@ -11,8 +11,12 @@ class ReservaFactory extends Factory
 {
     public function definition(): array
     {
+        $dataIda = fake()->dateTimeBetween('now', '+6 months');
+        $dataVolta = (clone $dataIda)->modify('+' . fake()->numberBetween(3, 20) . ' days');
+
         return [
-            'data_reserva' => fake()->dateTimeBetween('now', '+6 months')->format('Y-m-d'),
+            'data_reserva' => $dataIda->format('Y-m-d'),
+            'data_volta'   => $dataVolta->format('Y-m-d'),
             'status'       => fake()->randomElement(['Confirmada', 'Pendente', 'Cancelada']),
             'observacao'   => fake()->sentence(8),
             'cliente_id'   => Cliente::factory(),

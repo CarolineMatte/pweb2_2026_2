@@ -9,32 +9,27 @@ use App\Models\Destino;
 
 class AtracaoController extends Controller
 {
-    // INDEX — lista todas as atrações com filtro de busca por nome
     public function index()
     {
-        // Sem filtro: retorna todos os registros
         $dados = Atracao::with('destino')->get();
 
-        // Dados para o Gráfico de Pizza — atrações agrupadas por destino
-        $graficoLabels = Destino::orderBy('nome')->pluck('nome');
-        $graficoDados  = Destino::orderBy('nome')->get()->map(fn($d) => $d->atracoes()->count());
+        $graficoLabels = $dados->pluck('nome');
+        $graficoDados  = $dados->map(function ($atracao) {
+            return $atracao->reservas()->where('status', 'Confirmada')->count();
+        });
 
         return view('atracao.list', compact('dados', 'graficoLabels', 'graficoDados'));
     }
 
-    // CREATE — exibe o formulário em branco para nova atração
     function create()
     {
-        // Busca todos os destinos para popular o <select> no formulário
         $destinos = Destino::orderBy('nome')->get();
 
         return view('atracao.form', compact('destinos'));
     }
 
-    // STORE — valida e persiste o novo registro + faz upload da imagem
     function store(Request $request)
     {
-        // Validação dos campos obrigatórios
         $request->validate([
             'nome'       => 'required',
             'descricao'  => 'required',
@@ -48,14 +43,11 @@ class AtracaoController extends Controller
             'imagem.max'          => 'A imagem não pode ultrapassar 2 MB.',
         ]);
 
-        // Upload da imagem 
         $nomeArquivo = null;
         if ($request->hasFile('imagem')) {
-            // store() salva o arquivo na pasta 'atracoes' dentro do disco 'public'
             $nomeArquivo = $request->file('imagem')->store('atracoes', 'public');
         }
 
-        // Cria o registro no banco com os dados do formulário + nome do arquivo
         Atracao::create([
             'nome'       => $request->nome,
             'descricao'  => $request->descricao,
@@ -66,7 +58,6 @@ class AtracaoController extends Controller
         return redirect('atracao')->with('success', 'Atração cadastrada com sucesso!');
     }
 
-    // EDIT — exibe o formulário preenchido para edição
     function edit($id)
     {
         $data     = Atracao::find($id);
@@ -75,7 +66,6 @@ class AtracaoController extends Controller
         return view('atracao.form', compact('data', 'destinos'));
     }
 
-    // UPDATE — valida, remove imagem antiga (se houver nova) e atualiza o registro
     function update(Request $request, $id)
     {
         $request->validate([
@@ -93,15 +83,11 @@ class AtracaoController extends Controller
 
         $atracao = Atracao::find($id);
 
-        // Atualização de imagem
-        // Só executa o upload se o usuário enviou um novo arquivo
-        $nomeArquivo = $atracao->imagem; // mantém a imagem atual por padrão
+        $nomeArquivo = $atracao->imagem;
         if ($request->hasFile('imagem')) {
-            // Remove o arquivo ANTIGO do disco 'public' antes de salvar o novo
             if ($atracao->imagem) {
                 Storage::disk('public')->delete($atracao->imagem);
             }
-            // Faz o upload do novo arquivo e obtém o caminho relativo
             $nomeArquivo = $request->file('imagem')->store('atracoes', 'public');
         }
 
@@ -115,13 +101,10 @@ class AtracaoController extends Controller
         return redirect('atracao')->with('success', 'Atração atualizada com sucesso!');
     }
 
-    // DESTROY — remove o registro e exclui o arquivo de imagem do disco
     function destroy($id)
     {
         $atracao = Atracao::find($id);
 
-        // Exclusão da imagem
-        // Se existir um arquivo cadastrado, apaga-o do disco 'public'
         if ($atracao->imagem) {
             Storage::disk('public')->delete($atracao->imagem);
         }
@@ -131,19 +114,21 @@ class AtracaoController extends Controller
         return redirect('atracao')->with('success', 'Atração removida com sucesso!');
     }
 
-    // SEARCH — filtra atrações pelo nome usando LIKE
     public function search(Request $request)
     {
         if (!empty($request->valor)) {
-            // Busca registros cujo 'nome' contenha o valor digitado (case-insensitive)
             $dados = Atracao::with('destino')
                         ->where('nome', 'like', "%$request->valor%")
                         ->get();
         } else {
-            // Campo vazio: retorna tudo
             $dados = Atracao::with('destino')->get();
         }
 
-        return view('atracao.list', compact('dados'));
+        $graficoLabels = $dados->pluck('nome');
+        $graficoDados  = $dados->map(function ($atracao) {
+            return $atracao->reservas()->where('status', 'Confirmada')->count();
+        });
+
+        return view('atracao.list', compact('dados', 'graficoLabels', 'graficoDados'));
     }
 }

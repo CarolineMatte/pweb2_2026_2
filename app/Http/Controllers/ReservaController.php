@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use App\Models\Reserva;
 use App\Models\Cliente;
 use App\Models\Destino;
+use App\Models\Atracao;
 
 class ReservaController extends Controller
 {
     public function index()
     {
-        $dados = Reserva::all();
+        $dados = Reserva::with(['cliente', 'destino', 'atracao'])->get();
 
         return view('reserva.list')->with(['dados' => $dados]);
     }
@@ -19,7 +20,7 @@ class ReservaController extends Controller
     function create()
     {
         $clientes = Cliente::orderBy('nome')->get();
-        $destinos = Destino::orderBy('nome')->get();
+        $destinos = Destino::with('atracoes')->orderBy('nome')->get();
 
         return view('reserva.form', compact('clientes', 'destinos'));
     }
@@ -57,7 +58,7 @@ class ReservaController extends Controller
     {
         $data     = Reserva::find($id);
         $clientes = Cliente::orderBy('nome')->get();
-        $destinos = Destino::orderBy('nome')->get();
+        $destinos = Destino::with('atracoes')->orderBy('nome')->get();
 
         return view('reserva.form', compact('data', 'clientes', 'destinos'));
     }
@@ -82,18 +83,18 @@ class ReservaController extends Controller
     {
         if (!empty($request->valor)) {
             if ($request->tipo == 'cliente') {
-                $dados = Reserva::whereHas('cliente', function ($query) use ($request) {
+                $dados = Reserva::with(['cliente', 'destino', 'atracao'])->whereHas('cliente', function ($query) use ($request) {
                     $query->where('nome', 'like', "%$request->valor%");
                 })->get();
             } else {
-                $dados = Reserva::where(
+                $dados = Reserva::with(['cliente', 'destino', 'atracao'])->where(
                     $request->tipo,
                     'like',
                     "%$request->valor%"
                 )->get();
             }
         } else {
-            $dados = Reserva::all();
+            $dados = Reserva::with(['cliente', 'destino', 'atracao'])->get();
         }
 
         return view('reserva.list', compact('dados'));

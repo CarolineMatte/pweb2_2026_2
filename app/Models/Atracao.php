@@ -22,4 +22,9 @@ class Atracao extends Model
     {
         return $this->belongsTo(Destino::class, 'destino_id');
     }
+
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class, 'atracao_id');
+    }
 }

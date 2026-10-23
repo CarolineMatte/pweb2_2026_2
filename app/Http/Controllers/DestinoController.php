@@ -12,9 +12,8 @@ class DestinoController extends Controller
     {
         $dados = Destino::all();
 
-        // Dados para o Gráfico de Pizza — quantas reservas cada destino tem
         $graficoLabels = $dados->pluck('nome');
-        $graficoDados  = $dados->map(fn($d) => $d->reservas()->count());
+        $graficoDados  = $dados->map(fn($d) => $d->reservas()->where('status', 'Confirmada')->count());
 
         return view('destino.list', compact('dados', 'graficoLabels', 'graficoDados'));
     }
@@ -40,12 +39,10 @@ class DestinoController extends Controller
         ]);
     }
 
-    // STORE — salva o novo destino + faz upload da imagem
     function store(Request $request)
     {
         $this->validateForm($request);
 
-        // Upload da imagem
         $nomeArquivo = null;
         if ($request->hasFile('imagem')) {
             $nomeArquivo = $request->file('imagem')->store('destinos', 'public');
@@ -69,17 +66,14 @@ class DestinoController extends Controller
         return view('destino.form', compact('data'));
     }
 
-    // UPDATE — se nova imagem for enviada, remove a antiga e salva a nova
     function update(Request $request, $id)
     {
         $this->validateForm($request);
 
         $destino = Destino::find($id);
 
-        // Mantém a imagem atual; só substitui se o usuário enviou uma nova
         $nomeArquivo = $destino->imagem;
         if ($request->hasFile('imagem')) {
-            // Remove o arquivo antigo do disco 'public'
             if ($destino->imagem) {
                 Storage::disk('public')->delete($destino->imagem);
             }
@@ -97,7 +91,6 @@ class DestinoController extends Controller
         return redirect('destino')->with("success", 'Registro atualizado com sucesso!');
     }
 
-    // DESTROY — exclui o arquivo de imagem do disco antes de remover o registro
     function destroy($id)
     {
         $destino = Destino::find($id);
@@ -106,7 +99,6 @@ class DestinoController extends Controller
             return redirect('destino')->with("error", 'Não é possível excluir: este destino possui reservas associadas.');
         }
 
-        // Exclui a imagem do storage, se existir
         if ($destino->imagem) {
             Storage::disk('public')->delete($destino->imagem);
         }
@@ -128,6 +120,9 @@ class DestinoController extends Controller
             $dados = Destino::all();
         }
 
-        return view('destino.list', compact('dados'));
+        $graficoLabels = $dados->pluck('nome');
+        $graficoDados  = $dados->map(fn($d) => $d->reservas()->where('status', 'Confirmada')->count());
+
+        return view('destino.list', compact('dados', 'graficoLabels', 'graficoDados'));
     }
 }

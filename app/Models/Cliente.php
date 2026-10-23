@@ -21,7 +21,6 @@ class Cliente extends Model
         return $this->hasOne(Reserva::class, 'cliente_id');
     }
 
-    // Relacionamento 1:1 — Um Cliente tem um Passaporte.
     public function passaporte()
     {
         return $this->hasOne(Passaporte::class, 'cliente_id');
