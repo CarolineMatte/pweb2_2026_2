@@ -16,6 +16,34 @@
         </div>
     @endif
 
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ route('passaportes.search') }}" method="post" class="row g-2 align-items-end">
+                @csrf
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Buscar por</label>
+                    <select name="tipo" class="form-select">
+                        <option value="numero_documento">Nº Documento</option>
+                        <option value="pais_emissor">País Emissor</option>
+                        <option value="cliente">Cliente</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Valor</label>
+                    <input type="text" name="valor" placeholder="Digite para pesquisar..." class="form-control">
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i> Buscar
+                    </button>
+                    <a href="{{ route('passaportes.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header bg-white">
             <span class="text-muted small">{{ $passaportes->count() }} registro(s) encontrado(s)</span>

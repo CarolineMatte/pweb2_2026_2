@@ -55,6 +55,7 @@ Route::post('/passaporte/store', [PassaporteController::class, 'store'])->name('
 Route::get('/passaporte/edit/{id}', [PassaporteController::class, 'edit'])->name('passaportes.edit');
 Route::put('/passaporte/update/{id}', [PassaporteController::class, 'update'])->name('passaportes.update');
 Route::delete('/passaporte/{id}', [PassaporteController::class, 'destroy'])->name('passaportes.destroy');
+Route::post('/passaporte/search', [PassaporteController::class, 'search'])->name('passaportes.search');
 
 // --- Relatórios PDF ---
 Route::get('/relatorios/clientes', [RelatorioController::class, 'clientes'])->name('relatorios.clientes');

@@ -66,4 +66,24 @@ class PassaporteController extends Controller
 
         return redirect()->route('passaportes.index')->with('sucesso', 'Passaporte excluído com sucesso!');
     }
+
+    public function search(Request $request)
+    {
+        if (!empty($request->valor)) {
+            if ($request->tipo == 'cliente') {
+                $passaportes = Passaporte::with('cliente')
+                    ->whereHas('cliente', function ($query) use ($request) {
+                        $query->where('nome', 'like', "%$request->valor%");
+                    })->get();
+            } else {
+                $passaportes = Passaporte::with('cliente')
+                    ->where($request->tipo, 'like', "%$request->valor%")
+                    ->get();
+            }
+        } else {
+            $passaportes = Passaporte::with('cliente')->get();
+        }
+
+        return view('passaportes.list', compact('passaportes'));
+    }
 }
